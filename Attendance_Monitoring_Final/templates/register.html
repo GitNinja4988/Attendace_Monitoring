@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register New User - Face Recognition Attendance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .video-container {
+            position: relative;
+            width: 640px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+        .error-alert {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Face Recognition Attendance System</h1>
+        
+        <div class="row mt-4">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/">Mark Attendance</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/register">Register New User</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/report">Attendance Reports</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users">Users</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        {% if error %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                        {% endif %}
+                        
+                        <form method="POST" action="/register">
+                            <div class="mb-3">
+                                <label for="prn" class="form-label">PRN</label>
+                                <input type="text" class="form-control" id="prn" name="prn" required>
+                                <div class="form-text">Permanent Registration Number</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="class" class="form-label">Class/Department</label>
+                                <input type="text" class="form-control" id="class" name="class" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="year" class="form-label">Year/Grade</label>
+                                <input type="text" class="form-control" id="year" name="year" required>
+                            </div>
+                            
+                            <div class="alert alert-info" role="alert">
+                                After submitting, you will be prompted to capture face images for recognition.
+                            </div>
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Register User</button>
+                                <a href="/" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // This should be added to your registration page or included as a separate JS file
+
+document.addEventListener('DOMContentLoaded', function() {
+    const registrationForm = document.querySelector('form[action="/register"]');
+    
+    if (registrationForm) {
+        registrationForm.addEventListener('submit', function(event) {
+            // Prevent default form submission
+            event.preventDefault();
+            
+            // Get form values
+            const prn = document.getElementById('prn').value.trim();
+            const name = document.getElementById('name').value.trim();
+            
+            // Validate required fields
+            if (!prn || !name) {
+                showError('PRN and Name are required');
+                return;
+            }
+            
+            // Proceed with form submission
+            this.submit();
+        });
+    }
+    
+    function showError(message) {
+        // Check if error alert exists, create one if it doesn't
+        let errorAlert = document.querySelector('.alert-danger');
+        
+        if (!errorAlert) {
+            errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger';
+            errorAlert.setAttribute('role', 'alert');
+            
+            // Insert at the top of the form
+            const form = document.querySelector('form');
+            form.insertBefore(errorAlert, form.firstChild);
+        }
+        
+        // Set error message
+        errorAlert.textContent = message;
+    }
+});
+
+</script>
+</body>
+</html>

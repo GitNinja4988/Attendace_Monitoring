@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Attendance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .video-container {
+            position: relative;
+            width: 640px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+        .error-alert {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Face Recognition Attendance System</h1>
+        
+        <div class="row mt-4">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/">Mark Attendance</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/register">Register New User</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/report">Attendance Reports</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users">Users</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="video-container">
+                            <img src="{{ url_for('video_feed') }}" width="100%" alt="Video Stream">
+                        </div>
+                        
+                        <div class="controls mt-4">
+                            <button id="mark-attendance" class="btn btn-primary btn-lg">Mark Attendance</button>
+                        </div>
+                        
+                        <div class="alert alert-success mt-3" id="success-alert" style="display:none;"></div>
+                        <div class="alert alert-danger mt-3" id="error-alert" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#mark-attendance").click(function() {
+                $.get("/mark_attendance", function(data) {
+                    if(data.success) {
+                        $("#success-alert").text(data.message).show();
+                        $("#error-alert").hide();
+                        
+                        if(data.user) {
+                            const msg = `Attendance marked: ${data.user.name} (${data.user.class}, ${data.user.year})`;
+                            showNotification(msg);
+                        } else {
+                            showNotification(data.message);
+                        }
+                    } else {
+                        $("#error-alert").text(data.message).show();
+                        $("#success-alert").hide();
+                    }
+                });
+            });
+            
+            function showNotification(message) {
+                const notification = $("#notification");
+                notification.text(message).fadeIn();
+                
+                setTimeout(function() {
+                    notification.fadeOut();
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
